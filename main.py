@@ -2,7 +2,6 @@ import socket
 import sys
 import threading
 import socketserver
-import os
 
 UDP_IP = "141.60.1.1"
 CHATTERS = []
@@ -12,8 +11,9 @@ SERVER_IP = "0"
 
 USERNAME = input("Enter your Username: ")
 
-if(sys.argv[1] != ""):
-    CHATTERS.append(sys.argv[1])
+if(len(sys.argv) != 1):
+    if(sys.argv[1] != ""):
+        CHATTERS.append(sys.argv[1])
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.sendto(bytes(USERNAME + " joined the Chat.", "utf-8"), (UDP_IP, UDP_PORT))
@@ -29,7 +29,8 @@ class MyUDPHandler(socketserver.DatagramRequestHandler):
         if(not self.client_address[0] in CHATTERS):
             CHATTERS.append(self.client_address[0])
             send_message("/" + self.client_address[0])
-        print(self.client_address[0] + msgRecvd.decode("utf-8"))
+        if(self.client_address[0] != SERVER_IP):
+            print(self.client_address[0] + msgRecvd.decode("utf-8"))
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -44,17 +45,18 @@ def get_ip():
     return IP
 
 def send_message(message):
-    if(message[0] == "/"):
-        if(message == "/exit"):
-            exit()
+    if(len(message) != 0):
+        if(message[0] == "/"):
+            if(message == "/exit"):
+                exit()
+            else:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+                sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT))
         else:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-            sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT))
-    else:
-        for i in CHATTERS:
-            message = "(" + USERNAME + "): " + message
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-            sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT)) 
+            for i in CHATTERS:
+                message = "(" + USERNAME + "): " + message
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+                sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT)) 
 
 def background():
     listen_addr = ('0.0.0.0', 1141)
