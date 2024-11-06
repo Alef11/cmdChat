@@ -28,10 +28,14 @@ class MyUDPHandler(socketserver.DatagramRequestHandler):
         print(self.client_address[0] + msgRecvd.decode("utf-8"))
 
 def send_message(message):
-    for i in CHATTERS:
-        message = "(" + USERNAME + "): " + message
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-        sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT)) 
+    if(message[0] == "/"):
+        if(message == "/exit"):
+            exit()
+    else:
+        for i in CHATTERS:
+            message = "(" + USERNAME + "): " + message
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+            sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT)) 
 
 def background():
     listen_addr = ('0.0.0.0', 1141)
