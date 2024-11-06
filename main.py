@@ -30,7 +30,9 @@ class MyUDPHandler(socketserver.DatagramRequestHandler):
             CHATTERS.append(self.client_address[0])
             send_message("/" + self.client_address[0])
         if(self.client_address[0] != SERVER_IP):
+            print ("\033[A                             \033[A")
             print(self.client_address[0] + msgRecvd.decode("utf-8"))
+            print(SERVER_IP + "(You): ")
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -54,9 +56,12 @@ def send_message(message):
                 sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT))
         else:
             for i in CHATTERS:
-                message = "(" + USERNAME + "): " + message
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-                sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT)) 
+                try:
+                    message = "(" + USERNAME + "): " + message
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+                    sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT)) 
+                except:
+                    pass
 
 def background():
     listen_addr = ('0.0.0.0', 1141)
@@ -77,4 +82,4 @@ b.daemon = True
 b.start()
 
 while(1):
-    send_message(input("> "))
+    send_message(input(SERVER_IP + "(You): "))
