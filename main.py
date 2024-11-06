@@ -81,5 +81,8 @@ b.daemon = True
 
 b.start()
 
+send_message("/" + SERVER_IP)
+
 while(1):
-    send_message(input(SERVER_IP + "(You): "))
+    print(SERVER_IP + "(You): ")
+    send_message(input())
