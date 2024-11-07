@@ -15,9 +15,6 @@ if(len(sys.argv) != 1):
     if(sys.argv[1] != ""):
         CHATTERS.append(sys.argv[1])
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.sendto(bytes(USERNAME + " joined the Chat.", "utf-8"), (UDP_IP, UDP_PORT))
-
 MESSAGE = "(" + USERNAME + "): "
 for i in range(1, len(sys.argv)):
     MESSAGE = MESSAGE + " " + sys.argv[i]
