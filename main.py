@@ -23,10 +23,13 @@ class MyUDPHandler(socketserver.DatagramRequestHandler):
     def handle(self):
 
         msgRecvd = self.rfile.readline().strip()
-        if(not self.client_address[0] in CHATTERS):
+        if(msgRecvd.decode("utf-8")[0] == "/"):
+            CHATTERS.append(msgRecvd.decode("utf-8")[1:])
+        elif(not self.client_address[0] in CHATTERS):
             CHATTERS.append(self.client_address[0])
-            send_message("/" + self.client_address[0])
-        if(self.client_address[0] != SERVER_IP):
+            for i in CHATTERS:
+                send_message("/" + i)
+        elif(self.client_address[0] != SERVER_IP):
             print ("\033[A                             \033[A")
             print(self.client_address[0] + msgRecvd.decode("utf-8"))
             print(SERVER_IP + "(You): ")
@@ -83,5 +86,5 @@ b.start()
 send_message("/" + SERVER_IP) 
 
 while(1):
-    print(SERVER_IP + "(You): ")
+    print(SERVER_IP + "\033[1m \033[93m (You): \033[0m")
     send_message(input())
