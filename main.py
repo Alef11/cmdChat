@@ -47,13 +47,15 @@ def get_ip():
     return IP
 
 def send_message(message):
+
     if(len(message) != 0):
         if(message[0] == "/"):
             if(message == "/exit"):
                 exit()
             else:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-                sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT))
+                for i in CHATTERS:
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+                    sock.sendto(bytes(message, "utf-8"), (i, UDP_PORT))
         else:
             for i in CHATTERS:
                 try:
@@ -81,7 +83,7 @@ b.daemon = True
 
 b.start()
 
-send_message("/" + SERVER_IP)
+send_message("/" + SERVER_IP) 
 
 while(1):
     print(SERVER_IP + "(You): ")
