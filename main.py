@@ -3,10 +3,10 @@ import sys
 import threading
 import socketserver
 
-UDP_IP = "141.60.1.1"
+UDP_IP = ""
 CHATTERS = []
 UDP_PORT = 1141
-USERNAME = "Alex"
+USERNAME = ""
 SERVER_IP = "0"
 
 USERNAME = input("Enter your Username: ")
