@@ -2,6 +2,7 @@ import socket
 import sys
 import threading
 import socketserver
+import os.path
 
 UDP_IP = ""
 CHATTERS = []
@@ -9,7 +10,27 @@ UDP_PORT = 1141
 USERNAME = ""
 SERVER_IP = "0"
 
-USERNAME = input("Enter your Username: ")
+def setUsername(uname):
+    file = open('init.save', 'w')
+    file.write(uname)
+    USERNAME = uname
+    file.close
+
+
+def initlaize():
+    if(not os.path.isfile('init.save')):
+        open('init.save', 'x')
+    file = open('init.save', 'r')
+    content = file.read()
+    print(content)
+    if(len(content) > 0):
+        USERNAME = content[0]
+    else:
+        USERNAME = input("Enter your Username: ")
+        setUsername(USERNAME)
+    file.close()
+
+initlaize()
 
 if(len(sys.argv) != 1):
     if(sys.argv[1] != ""):
@@ -25,11 +46,11 @@ class MyUDPHandler(socketserver.DatagramRequestHandler):
         msgRecvd = self.rfile.readline().strip()
         if(msgRecvd.decode("utf-8")[0] == "/"):
             CHATTERS.append(msgRecvd.decode("utf-8")[1:])
-        elif(not self.client_address[0] in CHATTERS):
+        if(not self.client_address[0] in CHATTERS):
             CHATTERS.append(self.client_address[0])
             for i in CHATTERS:
-                send_message("/" + i)
-        elif(self.client_address[0] != SERVER_IP):
+                send_message("/" + self.client_address[0])
+        if(self.client_address[0] != SERVER_IP):
             print ("\033[A                             \033[A")
             print(self.client_address[0] + msgRecvd.decode("utf-8"))
             print(SERVER_IP + "(You): ")
@@ -50,8 +71,12 @@ def send_message(message):
 
     if(len(message) != 0):
         if(message[0] == "/"):
+            m = message.split(" ")
             if(message == "/exit"):
                 exit()
+            elif(m[0] == "/name"):
+                setUsername(m[1])
+                print("Changed Username to: " + m[1])
             else:
                 for i in CHATTERS:
                     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
@@ -83,7 +108,7 @@ b.daemon = True
 
 b.start()
 
-send_message("/" + SERVER_IP) 
+send_message("/" + SERVER_IP)
 
 while(1):
     print(SERVER_IP + "\033[1m \033[93m (You): \033[0m")
