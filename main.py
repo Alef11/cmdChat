@@ -46,11 +46,11 @@ class MyUDPHandler(socketserver.DatagramRequestHandler):
         msgRecvd = self.rfile.readline().strip()
         if(msgRecvd.decode("utf-8")[0] == "/"):
             CHATTERS.append(msgRecvd.decode("utf-8")[1:])
-        if(not self.client_address[0] in CHATTERS):
+        elif(not self.client_address[0] in CHATTERS):
             CHATTERS.append(self.client_address[0])
             for i in CHATTERS:
                 send_message("/" + self.client_address[0])
-        if(self.client_address[0] != SERVER_IP):
+        elif(self.client_address[0] != SERVER_IP):
             print ("\033[A                             \033[A")
             print(self.client_address[0] + msgRecvd.decode("utf-8"))
             print(SERVER_IP + "(You): ")
