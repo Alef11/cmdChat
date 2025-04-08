@@ -1,4 +1,4 @@
-#CMD chat
+# CMD chat
 
 A simple script to chat with you friends in cmd
 
